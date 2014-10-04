@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="VideoPlug" default="jar" basedir=".">
+
+    <path id="CLASSPATH">
+        <pathelement path="../../build/"/>
+        <pathelement location="../../build/jar/RemotePlug.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+
+    <target name="compile"  description="Compile StringSwitchDemo">
+        <mkdir dir="build" />
+        <javac srcdir="src"
+               includeantruntime="true"
+               destdir="build"
+               fork="yes"
+               debug="on">
+            <classpath refid="CLASSPATH"/>
+            <compilerarg value="-g"/>
+            <compilerarg value="-Xlint:overrides"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+        <mkdir dir="build/META-INF"/>
+        <mkdir dir="build/META-INF/services"/>
+        <copy file="src/META-INF/services/com.remotePlug.components.Plugin"
+              todir="build/META-INF/services"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="dist"/>
+        <jar destfile="dist/VideoPlug.jar" basedir="build"/>
+    </target>
+
+</project>
