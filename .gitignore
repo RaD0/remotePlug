@@ -1,2 +1,4 @@
 *.jar
 *.iml
+*.class
+

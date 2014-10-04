@@ -1,8 +1,6 @@
 package com.remotePlug.handlers;
 
-import com.remotePlug.resources.ResourceMediaItem;
-
 public interface Handler {
-    public boolean canHandle(ResourceMediaItem media);
-    public void handle(ResourceMediaItem media);
+    public boolean canHandle(PlugRequest request);
+    public void handle(PlugRequest request);
 }

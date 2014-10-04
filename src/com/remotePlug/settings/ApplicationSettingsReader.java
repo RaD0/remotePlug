@@ -23,6 +23,13 @@ public class ApplicationSettingsReader {
             ApplicationSettings applicationSettings = new ApplicationSettings();
             applicationSettings.addResourceRoot(root);
             applicationSettings.addValidFormats(formats);
+
+            winiReader.remove(resources);
+            for (String key : winiReader.keySet()) {
+                if (null != key && !key.isEmpty())
+                    applicationSettings.addSetting(key, winiReader.get(key));
+            }
+
         } catch (IOException e) {
             return false;
         }

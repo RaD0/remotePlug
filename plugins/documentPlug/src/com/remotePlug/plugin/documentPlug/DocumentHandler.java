@@ -1,21 +1,23 @@
 package com.remotePlug.plugin.documentPlug;
 
 import com.remotePlug.handlers.Handler;
-import com.remotePlug.resources.ResourceMediaItem;
+import com.remotePlug.handlers.PlugRequest;
 
 public class DocumentHandler implements Handler {
 
     final String[] offeredFormats = {"pdf", "txt", "doc"};
 
     @Override
-    public boolean canHandle(ResourceMediaItem media) {
-        return (null != media && isOffered(media.getFormat()));
+    public boolean canHandle(PlugRequest request) {
+        return (null != request
+                && null != request.getMediaItem()
+                && isOffered(request.getMediaItem().getFormat()));
     }
 
     @Override
-    public void handle(ResourceMediaItem media) {
-        if(null != media) {
-            System.out.printf("Document Handler handling: "+media.getName());
+    public void handle(PlugRequest request) {
+        if(null != request && null != request.getMediaItem()) {
+            System.out.printf("Document Handler handling: "+request.getMediaItem().getName());
         }
     }
 

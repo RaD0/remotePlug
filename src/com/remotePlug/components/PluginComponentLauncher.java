@@ -34,18 +34,4 @@ public class PluginComponentLauncher implements ComponentLauncher {
         return PluginComponentLauncher.class.getName();
     }
 
-
-    public class Module {
-        public void init() {}
-    }
-
-    public class ExtModuleLoader {
-
-        void load() {
-            ServiceLoader<Module> extModules = ServiceLoader.load(Module.class);
-            for(Module extModule : extModules) extModule.init();
-        }
-    }
-
-
 }

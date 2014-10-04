@@ -1,17 +1,24 @@
 package com.remotePlug.resources;
 
 import java.io.File;
+import java.util.UUID;
 
 public class ResourceMediaItem implements Comparable<ResourceMediaItem> {
 
+    private UUID id;
     private File mediaFile;
     private String name;
     private String format;
 
-    public ResourceMediaItem(File mediaFile, String name, String format) {
+    public ResourceMediaItem(UUID id, File mediaFile, String name, String format) {
+        this.id = id;
         this.mediaFile = mediaFile;
         this.name = name;
         this.format = format;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getPath() {
@@ -32,7 +39,7 @@ public class ResourceMediaItem implements Comparable<ResourceMediaItem> {
 
     @Override
     public String toString() {
-        return getName();
+        return getId()+" "+getName()+" "+getFormat();
     }
 
     @Override

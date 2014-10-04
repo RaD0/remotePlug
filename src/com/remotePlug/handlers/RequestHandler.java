@@ -1,7 +1,5 @@
 package com.remotePlug.handlers;
 
-import com.remotePlug.resources.ResourceMediaItem;
-
 import java.util.LinkedList;
 
 public class RequestHandler {
@@ -17,7 +15,7 @@ public class RequestHandler {
         return instance;
     }
 
-    public boolean handleMediaRequest(ResourceMediaItem requestedMedia) {
+    public boolean handleMediaRequest(PlugRequest requestedMedia) {
         for(Handler handler: handlers) {
             if(handler.canHandle(requestedMedia)) {
                 handler.handle(requestedMedia);

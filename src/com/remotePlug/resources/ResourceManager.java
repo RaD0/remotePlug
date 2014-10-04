@@ -1,16 +1,20 @@
 package com.remotePlug.resources;
 
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import com.remotePlug.settings.ApplicationSettings;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class ResourceManager {
 
     private static ResourceManager instance = null;
-    private HashMap<String,ResourceMediaItem> items = new HashMap<String,ResourceMediaItem>();
+    private HashMap<UUID,ResourceMediaItem> items = new HashMap<UUID,ResourceMediaItem>();
+    TimeBasedGenerator idGenerator = Generators.timeBasedGenerator();
 
     private ResourceManager() {
         loadResources();
@@ -29,9 +33,9 @@ public class ResourceManager {
         return Collections.unmodifiableCollection(items.values());
     }
 
-    public ResourceMediaItem getItem(String name) {
-        if(null == name) return null;
-        return items.get(name);
+    public ResourceMediaItem getItem(String uuid) {
+        if(null == uuid) return null;
+        return items.get(UUID.fromString(uuid));
     }
 
     public void refreshList() {
@@ -39,7 +43,7 @@ public class ResourceManager {
     }
 
     private void safeRefresh() {
-        HashMap<String,ResourceMediaItem> backup = new HashMap<String,ResourceMediaItem>(items);
+        HashMap<UUID,ResourceMediaItem> backup = new HashMap<UUID,ResourceMediaItem>(items);
         items.clear();
         if(!loadResources()) {
             items =  backup;
@@ -69,12 +73,13 @@ public class ResourceManager {
 
     private void populateItems(File itemToAdd) {
         if(null != itemToAdd) {
+            UUID uuid = idGenerator.generate();
             String name = FileUtilities.getFileName(itemToAdd);
             if(null == name) return;
             String format = FileUtilities.getFileFormat(itemToAdd);
             if(null == format) return;
-            ResourceMediaItem item_ = new ResourceMediaItem(itemToAdd, name, format);
-            items.put(item_.getName(), item_);
+            ResourceMediaItem item_ = new ResourceMediaItem(uuid, itemToAdd, name, format);
+            items.put(uuid, item_);
         }
     }
 

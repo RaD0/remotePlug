@@ -3,11 +3,12 @@ package com.remotePlug.components;
 import com.remotePlug.resources.ResourceComponentLauncher;
 import com.remotePlug.settings.ApplicationComponentLauncher;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class CoreComponentsLauncher {
 
-    private ArrayList<ComponentLauncher> launchers;
+    private Queue<ComponentLauncher> launchers;
     private static CoreComponentsLauncher instance = null;
 
     private CoreComponentsLauncher() {}
@@ -24,15 +25,16 @@ public class CoreComponentsLauncher {
     }
 
     private void loadLaunchers(String settingsPath) {
-        launchers = new ArrayList<ComponentLauncher>(3);
+        launchers = new LinkedList<ComponentLauncher>();
         launchers.add(new ApplicationComponentLauncher(settingsPath));
         launchers.add(new ResourceComponentLauncher());
         launchers.add(new PluginComponentLauncher());
     }
 
     private boolean launch() {
-        for(ComponentLauncher launcher: launchers) {
-            if(!launcher.load()) {
+        while (!launchers.isEmpty()) {
+            ComponentLauncher launcher = launchers.poll();
+            if (!launcher.load()) {
                 System.out.println("Failed to load launcher: "+launcher.getLauncher());
                 return false;
             }
