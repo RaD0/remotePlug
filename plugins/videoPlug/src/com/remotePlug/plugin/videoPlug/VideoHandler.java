@@ -4,8 +4,8 @@ import com.remotePlug.handlers.Handler;
 import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.plugin.videoPlug.mediaPlayer.MediaPlayer;
 import com.remotePlug.plugin.videoPlug.mediaPlayer.MediaPlayerEngine;
-import com.remotePlug.resources.ResourceMediaItem;
-
+import com.remotePlug.resources.FileUtilities;
+import com.remotePlug.resources.ResourceFile;
 
 public class VideoHandler implements Handler {
 
@@ -14,14 +14,15 @@ public class VideoHandler implements Handler {
     @Override
     public boolean canHandle(PlugRequest request) {
         return (null != request
-                && null != request.getMediaItem()
-                && acceptableFormat.equals(request.getMediaItem().getFormat()));
+                && null != request.getResourceItem()
+                && FileUtilities.isAFile(request.getResourceItem())
+                && acceptableFormat.equals(FileUtilities.toResourceFile(request.getResourceItem()).getFormat()));
     }
 
     @Override
     public void handle(PlugRequest request) {
-        if(null != request && null != request.getMediaItem()) {
-            ResourceMediaItem media = request.getMediaItem();
+        if(null != request && null != request.getResourceItem()) {
+            ResourceFile media = FileUtilities.toResourceFile(request.getResourceItem());
             MediaPlayer.Option requestType = convertToOption((String) request.getRequestType());
             if(null == requestType) return;
             MediaPlayerEngine.getInstance().operatePlayer(media, requestType);

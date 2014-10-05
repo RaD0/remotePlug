@@ -1,6 +1,6 @@
 package com.remotePlug.plugin.videoPlug.mediaPlayer;
 
-import com.remotePlug.resources.ResourceMediaItem;
+import com.remotePlug.resources.ResourceFile;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
@@ -11,7 +11,7 @@ public class MediaPlayer {
     private final EmbeddedMediaPlayer mediaPlayer;
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
     private MediaPlayerFrame frame = null;
-    private ResourceMediaItem nowPlaying = null;
+    private ResourceFile nowPlaying = null;
     private HashMap<Option,MediaPlayerOption> availableOptions;
 
     MediaPlayer() {
@@ -28,7 +28,7 @@ public class MediaPlayer {
         return processOption(toProcess, nowPlaying);
     }
 
-    public boolean processOption(Option toProcess, ResourceMediaItem mediaItem) {
+    public boolean processOption(Option toProcess, ResourceFile mediaItem) {
         return (null != toProcess
                 && null != mediaItem
                 && processOption_(toProcess, mediaItem));
@@ -38,7 +38,7 @@ public class MediaPlayer {
         Play, Pause, UnPause, Stop, VolumeUp, VolumeDown, Next, Previous
     }
 
-    private boolean processOption_(Option toProcess, ResourceMediaItem mediaItem) {
+    private boolean processOption_(Option toProcess, ResourceFile mediaItem) {
         return (availableOptions.containsKey(toProcess)
                 && null != availableOptions.get(toProcess)
                 && availableOptions.get(toProcess).execute(mediaItem));
@@ -46,7 +46,7 @@ public class MediaPlayer {
 
     private class Play implements MediaPlayerOption {
         @Override
-        public boolean execute(ResourceMediaItem mediaItem) {
+        public boolean execute(ResourceFile mediaItem) {
             frame = new MediaPlayerFrame(mediaPlayerComponent);
             if (mediaPlayer.playMedia(mediaItem.getPath())) {
                 nowPlaying = mediaItem;
@@ -58,7 +58,7 @@ public class MediaPlayer {
 
     private class Pause implements MediaPlayerOption {
         @Override
-        public boolean execute(ResourceMediaItem mediaItem) {
+        public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying) return false;
             if (mediaPlayer.canPause()) mediaPlayer.pause();
             return true;
@@ -67,7 +67,7 @@ public class MediaPlayer {
 
     private class Stop implements MediaPlayerOption {
         @Override
-        public boolean execute(ResourceMediaItem mediaItem) {
+        public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying) return false;
             mediaPlayer.stop();
             nowPlaying = null;
@@ -77,7 +77,7 @@ public class MediaPlayer {
 
     private class Unpause implements MediaPlayerOption {
         @Override
-        public boolean execute(ResourceMediaItem mediaItem) {
+        public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying)  return false;
             if (mediaPlayer.isPlayable())
                 mediaPlayer.play();

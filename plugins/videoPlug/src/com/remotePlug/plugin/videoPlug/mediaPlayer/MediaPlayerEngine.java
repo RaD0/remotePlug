@@ -1,6 +1,6 @@
 package com.remotePlug.plugin.videoPlug.mediaPlayer;
 
-import com.remotePlug.resources.ResourceMediaItem;
+import com.remotePlug.resources.ResourceFile;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,7 @@ public class MediaPlayerEngine {
         return getPlayer().processOption(option);
     }
 
-    public boolean operatePlayer(ResourceMediaItem mediaItem, MediaPlayer.Option option) {
+    public boolean operatePlayer(ResourceFile mediaItem, MediaPlayer.Option option) {
         return getPlayer().processOption(option, mediaItem);
     }
 

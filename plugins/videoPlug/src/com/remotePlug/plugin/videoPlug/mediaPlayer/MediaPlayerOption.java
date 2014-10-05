@@ -1,7 +1,7 @@
 package com.remotePlug.plugin.videoPlug.mediaPlayer;
 
-import com.remotePlug.resources.ResourceMediaItem;
+import com.remotePlug.resources.ResourceFile;
 
 interface MediaPlayerOption {
-    boolean execute(ResourceMediaItem mediaItem);
+    boolean execute(ResourceFile mediaItem);
 }

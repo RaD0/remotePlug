@@ -11,6 +11,7 @@ public class SparkEngine {
         if (running) return false;
         UISettings uiSettings = new UISettings();
         Spark.setPort(uiSettings.getPort());
+        Spark.setIpAddress(uiSettings.getHost());
         Spark.externalStaticFileLocation(uiSettings.getStaticContentPath().getAbsolutePath());
         Routes.ignite(uiSettings);
         running = true;

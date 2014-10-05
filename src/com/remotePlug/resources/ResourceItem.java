@@ -3,18 +3,18 @@ package com.remotePlug.resources;
 import java.io.File;
 import java.util.UUID;
 
-public class ResourceMediaItem implements Comparable<ResourceMediaItem> {
+public abstract class ResourceItem implements Comparable<ResourceItem> {
 
     private UUID id;
     private File mediaFile;
     private String name;
-    private String format;
+    private FileUtilities.ResourceType type;
 
-    public ResourceMediaItem(UUID id, File mediaFile, String name, String format) {
+    public ResourceItem(UUID id, File mediaFile, String name, FileUtilities.ResourceType type) {
         this.id = id;
         this.mediaFile = mediaFile;
         this.name = name;
-        this.format = format;
+        this.type = type;
     }
 
     public UUID getId() {
@@ -29,21 +29,15 @@ public class ResourceMediaItem implements Comparable<ResourceMediaItem> {
         return name;
     }
 
-    public String getFormat() {
-        return format;
-    }
-
-    public File getFile() {
+    public File getRaw() {
         return mediaFile;
     }
 
-    @Override
-    public String toString() {
-        return getId()+" "+getName()+" "+getFormat();
+    public FileUtilities.ResourceType getType() {
+        return type;
     }
 
-    @Override
-    public int compareTo(ResourceMediaItem o) {
-        return 0;
+    protected boolean match(UUID id) {
+        return (null != id && getId().equals(id));
     }
 }

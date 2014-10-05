@@ -10,9 +10,16 @@
         <form action="/play" method="post">
             <tr>
                 <td>${item.getName()}</td>
-                <td>${item.getFormat()}</td>
+                <#if helper.isAFile(item) >
+                    <td>${item.getFormat()}</td>
+                    <td><input type="submit"/></td>
+                <#else>
+                    <td> DIR </td>
+                    <td> ======= </td>
+                </#if>
+
                 <input type="hidden" value="${item.getId()}" name="id" />
-                <td><input type="submit"/></td>
+
             </tr>
         </form>
     </#list>

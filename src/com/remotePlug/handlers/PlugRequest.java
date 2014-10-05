@@ -1,18 +1,18 @@
 package com.remotePlug.handlers;
 
-import com.remotePlug.resources.ResourceMediaItem;
+import com.remotePlug.resources.ResourceItem;
 
 public class PlugRequest {
-    private final ResourceMediaItem mediaItem;
+    private final ResourceItem resourceItem;
     private final Object requestType;
 
-    public PlugRequest(ResourceMediaItem mediaItem, Object requestType) {
-        this.mediaItem = mediaItem;
+    public PlugRequest(ResourceItem resourceItem, Object requestType) {
+        this.resourceItem = resourceItem;
         this.requestType = requestType;
     }
 
-    public ResourceMediaItem getMediaItem() {
-        return mediaItem;
+    public ResourceItem getResourceItem() {
+        return resourceItem;
     }
 
     public Object getRequestType() {

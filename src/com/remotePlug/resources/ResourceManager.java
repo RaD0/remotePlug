@@ -5,16 +5,13 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import com.remotePlug.settings.ApplicationSettings;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class ResourceManager {
 
     private static ResourceManager instance = null;
-    private HashMap<UUID,ResourceMediaItem> items = new HashMap<UUID,ResourceMediaItem>();
     TimeBasedGenerator idGenerator = Generators.timeBasedGenerator();
+    private ResourceDirectory root = null;
 
     private ResourceManager() {
         loadResources();
@@ -29,13 +26,13 @@ public class ResourceManager {
         return instance;
     }
 
-    public Collection<ResourceMediaItem> getItems() {
-        return Collections.unmodifiableCollection(items.values());
+    public ResourceDirectory getRoot() {
+        return root;
     }
 
-    public ResourceMediaItem getItem(String uuid) {
+    public ResourceItem getItem(String uuid) {
         if(null == uuid) return null;
-        return items.get(UUID.fromString(uuid));
+        return root.goDeepAndGetChild(UUID.fromString(uuid));
     }
 
     public void refreshList() {
@@ -43,44 +40,53 @@ public class ResourceManager {
     }
 
     private void safeRefresh() {
-        HashMap<UUID,ResourceMediaItem> backup = new HashMap<UUID,ResourceMediaItem>(items);
-        items.clear();
-        if(!loadResources()) {
-            items =  backup;
-        } else {
-            backup.clear();
-        }
+//        HashMap<UUID,ResourceFile> backup = new HashMap<UUID,ResourceFile>(items);
+//        items.clear();
+//        if(!loadResources()) {
+//            items =  backup;
+//        } else {
+//            backup.clear();
+//        }
     }
 
     private boolean loadResources() {
         File root = ApplicationSettings.getInstance().getResourceRoot();
         if(null == root || !root.exists() || !root.isDirectory()) return false;
         try {
-            readAndCreateItems_(root);
+            this.root = createResourceDirectory(root);
+            readAndCreateItems_(this.root);
         } catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    private void readAndCreateItems_(File root) {
-        for(File item: root.listFiles()) {
-            if(item.isDirectory())
-                readAndCreateItems_(item);
-            else populateItems(item);
+    private void readAndCreateItems_(ResourceDirectory root) {
+        if (null != root) {
+            for(File file : root.getRaw().listFiles()) {
+                if (file.isDirectory()) {
+                    ResourceDirectory childDir = createResourceDirectory(file);
+                    root.add(childDir);
+                    readAndCreateItems_(childDir);
+                } else {
+                    root.add(createResourceFile(file, root));
+                }
+            }
         }
     }
 
-    private void populateItems(File itemToAdd) {
-        if(null != itemToAdd) {
-            UUID uuid = idGenerator.generate();
-            String name = FileUtilities.getFileName(itemToAdd);
-            if(null == name) return;
-            String format = FileUtilities.getFileFormat(itemToAdd);
-            if(null == format) return;
-            ResourceMediaItem item_ = new ResourceMediaItem(uuid, itemToAdd, name, format);
-            items.put(uuid, item_);
-        }
+    private ResourceDirectory createResourceDirectory(File file) {
+        String name = file.getName();
+        if(null == name) return null;
+        return new ResourceDirectory(idGenerator.generate(), file, name, file.list().length);
+    }
+
+    private ResourceFile createResourceFile(File file, ResourceDirectory parent) {
+        String name = FileUtilities.getFileName(file);
+        if(null == name) return null;
+        String format = FileUtilities.getFileFormat(file);
+        if(null == format) return null;
+        return new ResourceFile(idGenerator.generate(), file, name, format, parent);
     }
 
 
