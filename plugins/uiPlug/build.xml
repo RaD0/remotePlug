@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<project name="VideoPlug" default="jar" basedir=".">
+<project name="UIPlug" default="jar" basedir=".">
 
     <path id="CLASSPATH">
         <pathelement path="../../build/"/>
@@ -33,7 +33,7 @@
 
     <target name="jar" depends="compile">
         <mkdir dir="dist"/>
-        <jar destfile="dist/VideoPlug.jar" basedir="build"/>
+        <jar destfile="dist/UIPlug.jar" basedir="build"/>
     </target>
 
 </project>
