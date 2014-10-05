@@ -16,7 +16,7 @@ public class MediaPlayerFrame extends JFrame {
         setLocation(100, 100);
         setSize(MediaPlayerSettings.getInstance().getFrameDimensions().toAWTDimension());
         setUndecorated(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         pack();
         setVisible(true);

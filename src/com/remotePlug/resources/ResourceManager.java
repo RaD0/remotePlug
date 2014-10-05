@@ -53,7 +53,7 @@ public class ResourceManager {
         File root = ApplicationSettings.getInstance().getResourceRoot();
         if(null == root || !root.exists() || !root.isDirectory()) return false;
         try {
-            this.root = createResourceDirectory(root);
+            this.root = createResourceDirectory(root, null);
             readAndCreateItems_(this.root);
         } catch (Exception e) {
             return false;
@@ -65,7 +65,7 @@ public class ResourceManager {
         if (null != root) {
             for(File file : root.getRaw().listFiles()) {
                 if (file.isDirectory()) {
-                    ResourceDirectory childDir = createResourceDirectory(file);
+                    ResourceDirectory childDir = createResourceDirectory(file, root);
                     root.add(childDir);
                     readAndCreateItems_(childDir);
                 } else {
@@ -75,10 +75,10 @@ public class ResourceManager {
         }
     }
 
-    private ResourceDirectory createResourceDirectory(File file) {
+    private ResourceDirectory createResourceDirectory(File file, ResourceDirectory parent) {
         String name = file.getName();
         if(null == name) return null;
-        return new ResourceDirectory(idGenerator.generate(), file, name, file.list().length);
+        return new ResourceDirectory(idGenerator.generate(), file, name, file.list().length, parent);
     }
 
     private ResourceFile createResourceFile(File file, ResourceDirectory parent) {

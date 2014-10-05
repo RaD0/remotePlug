@@ -11,7 +11,7 @@ public class MediaPlayer {
     private final EmbeddedMediaPlayer mediaPlayer;
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
     private MediaPlayerFrame frame = null;
-    private ResourceFile nowPlaying = null;
+    private NowPlaying nowPlaying = new NowPlaying(Status.Closed, null);
     private HashMap<Option,MediaPlayerOption> availableOptions;
 
     MediaPlayer() {
@@ -25,7 +25,8 @@ public class MediaPlayer {
     }
 
     public boolean processOption(Option toProcess) {
-        return processOption(toProcess, nowPlaying);
+        if (null == nowPlaying) return false;
+        return processOption(toProcess, nowPlaying.getMediaItem());
     }
 
     public boolean processOption(Option toProcess, ResourceFile mediaItem) {
@@ -36,6 +37,43 @@ public class MediaPlayer {
 
     public enum Option {
         Play, Pause, UnPause, Stop, VolumeUp, VolumeDown, Next, Previous
+    }
+
+    public enum Status {
+        Playing, Paused, Stopped, Closed
+    }
+
+    public NowPlaying getNowPlaying() {
+        return nowPlaying;
+    }
+
+    public class NowPlaying {
+        private Status status;
+        private ResourceFile playing;
+
+        NowPlaying(Status status, ResourceFile playing) {
+            this.status = status;   this.playing = playing;
+        }
+
+        void updateStatus(Status newStatus) {
+            status = newStatus;
+        }
+
+        void updatePlaying(ResourceFile nowPlaying) {
+            playing = nowPlaying;
+        }
+
+        void update(Status newStatus, ResourceFile nowPlaying) {
+            updateStatus(newStatus);    updatePlaying(nowPlaying);
+        }
+
+        public ResourceFile getMediaItem() {
+            return playing;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
     }
 
     private boolean processOption_(Option toProcess, ResourceFile mediaItem) {
@@ -49,7 +87,7 @@ public class MediaPlayer {
         public boolean execute(ResourceFile mediaItem) {
             frame = new MediaPlayerFrame(mediaPlayerComponent);
             if (mediaPlayer.playMedia(mediaItem.getPath())) {
-                nowPlaying = mediaItem;
+                nowPlaying.update(Status.Playing, mediaItem);
                 return true;
             }
             return false;
@@ -61,6 +99,7 @@ public class MediaPlayer {
         public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying) return false;
             if (mediaPlayer.canPause()) mediaPlayer.pause();
+            nowPlaying.updateStatus(Status.Paused);
             return true;
         }
     }
@@ -70,7 +109,7 @@ public class MediaPlayer {
         public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying) return false;
             mediaPlayer.stop();
-            nowPlaying = null;
+            nowPlaying.update(Status.Closed, null);
             return true;
         }
     }
@@ -81,6 +120,7 @@ public class MediaPlayer {
             if (null == frame || null == nowPlaying)  return false;
             if (mediaPlayer.isPlayable())
                 mediaPlayer.play();
+            nowPlaying.updateStatus(Status.Playing);
             return true;
         }
     }

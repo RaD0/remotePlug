@@ -32,6 +32,10 @@ public class MediaPlayerEngine {
         return getPlayer().processOption(option, mediaItem);
     }
 
+    public MediaPlayer.NowPlaying getNowPlaying() {
+        return getPlayer().getNowPlaying();
+    }
+
     private MediaPlayer getPlayer() {
         if (runningPlayers.isEmpty()) {
             runningPlayers.add(new MediaPlayer());

@@ -3,6 +3,10 @@ package com.remotePlug.plugin.documentPlug;
 import com.remotePlug.handlers.Handler;
 import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.resources.FileUtilities;
+import com.remotePlug.resources.ResourceItem;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class DocumentHandler implements Handler {
 
@@ -21,6 +25,11 @@ public class DocumentHandler implements Handler {
         if(null != request && null != request.getResourceItem()) {
             System.out.printf("Document Handler handling: "+request.getResourceItem().getName());
         }
+    }
+
+    @Override
+    public Collection<String> getPermittedOperations(ResourceItem item) {
+        return Collections.singleton("N/A");
     }
 
     private boolean isOffered(String format) {

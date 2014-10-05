@@ -1,5 +1,7 @@
 package com.remotePlug.resources;
 
+import com.remotePlug.handlers.PlugRequest;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,10 +11,13 @@ import java.util.UUID;
 public class ResourceDirectory extends ResourceItem {
 
     private ArrayList<ResourceItem> children;
+    private ResourceDirectory parent;
 
-    public ResourceDirectory(UUID id, File mediaFile, String name, int size) {
-        super(id, mediaFile, name, FileUtilities.ResourceType.Directory);
+    public ResourceDirectory(UUID id, File mediaFile, String name, int size, ResourceDirectory parent) {
+        super(id, mediaFile, name, FileUtilities.ResourceType.Directory, "/");
         children = new ArrayList<>(size);
+        this.parent = parent;
+        setPlugRequest();
     }
 
     void add(ResourceItem toAdd) {
@@ -33,6 +38,14 @@ public class ResourceDirectory extends ResourceItem {
 
     public boolean hasChild(UUID id) {
         return (null != id && null != getChild(id));
+    }
+
+    public boolean hasParent() {
+        return (null != parent);
+    }
+
+    public ResourceDirectory getParent() {
+        return parent;
     }
 
     public ResourceItem getChild(UUID id) {
@@ -64,5 +77,10 @@ public class ResourceDirectory extends ResourceItem {
         if (null == o) return -1;
         if (getId().equals(o.getId())) return 0;
         return 1;
+    }
+
+    @Override
+    protected void setPlugRequest() {
+        request = new PlugRequest(this, "/");
     }
 }

@@ -1,21 +1,18 @@
 package com.remotePlug.resources;
 
+import com.remotePlug.handlers.PlugRequest;
+
 import java.io.File;
 import java.util.UUID;
 
 public class ResourceFile extends ResourceItem {
 
-    private String format;
     private ResourceDirectory parent;
 
     public ResourceFile(UUID id, File mediaFile, String name, String format, ResourceDirectory parent) {
-        super(id, mediaFile, name, FileUtilities.ResourceType.File);
-        this.format = format;
+        super(id, mediaFile, name, FileUtilities.ResourceType.File, format);
         this.parent = parent;
-    }
-
-    public String getFormat() {
-        return format;
+        setPlugRequest();
     }
 
     public ResourceDirectory getParent() {
@@ -30,5 +27,10 @@ public class ResourceFile extends ResourceItem {
     @Override
     public int compareTo(ResourceItem o) {
         return 0;
+    }
+
+    @Override
+    protected void setPlugRequest() {
+        request = new PlugRequest(this, getFormat());
     }
 }
