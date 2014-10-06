@@ -2,6 +2,8 @@
 <#include "/wraps/menu.ftl">
 
 <div class="container">
+    <#include "/partials/currently_running.ftl">
+
     <div class="row">
         <div class="col-lg-12 text-center">
             <h1>

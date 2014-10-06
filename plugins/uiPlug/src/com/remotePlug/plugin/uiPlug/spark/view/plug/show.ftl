@@ -13,11 +13,11 @@
 
 
 <div class="container">
-
+    <#include "/partials/currently_running.ftl">
+    <#include "/partials/back.ftl">
     <div class="row">
         <div class="col-lg-12 text-center">
-            <#include "/partials/back.ftl">
-            <h1>${item.getRaw().getName()}</h1>
+            <h4 style="word-wrap: break-word;">${item.getRaw().getName()}</h4>
         </div>
     </div>
 

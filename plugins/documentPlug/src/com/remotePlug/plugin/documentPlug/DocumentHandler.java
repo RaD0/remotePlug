@@ -36,4 +36,10 @@ public class DocumentHandler implements Handler {
         handlingData.update("N/A", null, false);
     }
 
+    @Override
+    public ResourceItem getCurrentlyHandling() {
+        // todo!
+        return null;
+    }
+
 }

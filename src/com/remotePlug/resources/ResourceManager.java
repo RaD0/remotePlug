@@ -85,7 +85,7 @@ public class ResourceManager {
         String name = FileUtilities.getFileName(file);
         if(null == name) return null;
         String format = FileUtilities.getFileFormat(file);
-        if(null == format) return null;
+        if(null == format || !ApplicationSettings.getInstance().isValidFormat(format)) return null;
         return new ResourceFile(idGenerator.generate(), file, name, format, parent);
     }
 

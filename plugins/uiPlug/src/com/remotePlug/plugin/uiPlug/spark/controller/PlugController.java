@@ -26,6 +26,7 @@ public class PlugController {
     public static ModelAndView list(Request request, Response response) {
         ResourceDirectory root = ResourceManager.getInstance().getRoot();
         attributes.put("root", root);
+        attributes.put("currentlyRunning", RequestHandler.getInstance().getRunningItems());
         return new ModelAndView(attributes, "/plug/list.ftl");
     }
 
@@ -53,6 +54,7 @@ public class PlugController {
         }
         if (!added)
             attributes.put("root", ResourceManager.getInstance().getRoot());
+        attributes.put("currentlyRunning", RequestHandler.getInstance().getRunningItems());
         return new ModelAndView(attributes, "/plug/list.ftl");
     }
 
@@ -64,7 +66,7 @@ public class PlugController {
             return null;
         }
         attributes.put("item", FileUtilities.toResourceFile(item));
-
+        attributes.put("currentlyRunning", RequestHandler.getInstance().getRunningItems());
         return new ModelAndView(attributes, "/plug/show.ftl");
     }
 

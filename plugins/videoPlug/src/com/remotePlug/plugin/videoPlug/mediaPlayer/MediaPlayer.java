@@ -2,9 +2,12 @@ package com.remotePlug.plugin.videoPlug.mediaPlayer;
 
 import com.remotePlug.resources.ResourceFile;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.medialist.MediaList;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.list.MediaListPlayer;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class MediaPlayer {
 
@@ -13,15 +16,23 @@ public class MediaPlayer {
     private MediaPlayerFrame frame = null;
     private NowPlaying nowPlaying = new NowPlaying(Status.Closed, null);
     private HashMap<Option,MediaPlayerOption> availableOptions;
+    private ArrayList<ResourceFile> playList = new ArrayList<>();
+    private int playing = -1;
+    private final int VOLUME_INTERVAL = 20;
 
     MediaPlayer() {
         mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
         mediaPlayer = mediaPlayerComponent.getMediaPlayer();
-        availableOptions = new HashMap<Option, MediaPlayerOption>();
+        availableOptions = new HashMap<>();
         availableOptions.put(Option.Play, new Play());
         availableOptions.put(Option.Pause, new Pause());
         availableOptions.put(Option.Stop, new Stop());
         availableOptions.put(Option.UnPause, new Unpause());
+        availableOptions.put(Option.AddToPlaylist, new AddToPlaylist());
+        availableOptions.put(Option.Next, new Next());
+        availableOptions.put(Option.Previous, new Previous());
+        availableOptions.put(Option.VolumeUp, new VolumeUp());
+        availableOptions.put(Option.VolumeDown, new VolumeDown());
     }
 
     public boolean processOption(Option toProcess) {
@@ -36,7 +47,7 @@ public class MediaPlayer {
     }
 
     public enum Option {
-        Play, Pause, UnPause, Stop, VolumeUp, VolumeDown, Next, Previous
+        Play, Pause, UnPause, Stop, VolumeUp, VolumeDown, Next, Previous, AddToPlaylist
     }
 
     public enum Status {
@@ -45,6 +56,14 @@ public class MediaPlayer {
 
     public NowPlaying getNowPlaying() {
         return nowPlaying;
+    }
+
+    public boolean hasNext() {
+        return playList.size() > 0;
+    }
+
+    public boolean hasPrevious() {
+        return (playing > 0);
     }
 
     public class NowPlaying {
@@ -82,10 +101,32 @@ public class MediaPlayer {
                 && availableOptions.get(toProcess).execute(mediaItem));
     }
 
+    private void onCloseFrame() {
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (null != nowPlaying.getMediaItem())
+                    processOption_(Option.Stop, nowPlaying.getMediaItem());
+                frame.dispose();
+            }
+        });
+    }
+
+    private void createFrame() {
+        frame = new MediaPlayerFrame(mediaPlayerComponent);
+        onCloseFrame();
+    }
+
     private class Play implements MediaPlayerOption {
+
         @Override
         public boolean execute(ResourceFile mediaItem) {
-            frame = new MediaPlayerFrame(mediaPlayerComponent);
+            if (null != nowPlaying.getMediaItem()) {
+                processOption_(Option.Stop, nowPlaying.getMediaItem());
+                frame.dispose();
+                frame = null;
+            }
+            createFrame();
             if (mediaPlayer.playMedia(mediaItem.getPath())) {
                 nowPlaying.update(Status.Playing, mediaItem);
                 return true;
@@ -95,6 +136,7 @@ public class MediaPlayer {
     }
 
     private class Pause implements MediaPlayerOption {
+
         @Override
         public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying) return false;
@@ -105,6 +147,7 @@ public class MediaPlayer {
     }
 
     private class Stop implements MediaPlayerOption {
+
         @Override
         public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying) return false;
@@ -115,12 +158,73 @@ public class MediaPlayer {
     }
 
     private class Unpause implements MediaPlayerOption {
+
         @Override
         public boolean execute(ResourceFile mediaItem) {
             if (null == frame || null == nowPlaying)  return false;
             if (mediaPlayer.isPlayable())
                 mediaPlayer.play();
             nowPlaying.updateStatus(Status.Playing);
+            return true;
+        }
+    }
+
+    private class AddToPlaylist implements MediaPlayerOption {
+
+        @Override
+        public boolean execute(ResourceFile mediaItem) {
+            if (null == frame || null == nowPlaying || null == mediaItem)  return false;
+            if (null != nowPlaying.getMediaItem() && playList.isEmpty()) {
+                playList.add(nowPlaying.getMediaItem());
+            }
+            if (playing == -1) playing++;
+            return playList.add(mediaItem);
+        }
+    }
+
+    private class Next implements MediaPlayerOption {
+
+        @Override
+        public boolean execute(ResourceFile mediaItem) {
+            if (null == frame || null == nowPlaying || null == mediaItem)  return false;
+            if (!playList.isEmpty() && playList.size() > (playing+1)) {
+                return processOption_(Option.Play, playList.get(++playing));
+            } else return false;
+        }
+    }
+
+    private class Previous implements MediaPlayerOption  {
+
+        @Override
+        public boolean execute(ResourceFile mediaItem) {
+            if (null == frame || null == nowPlaying || null == mediaItem)  return false;
+            if (!playList.isEmpty() && playing > 0)
+                return processOption_(Option.Play, playList.get(--playing));
+            return false;
+        }
+    }
+
+    private class VolumeUp implements MediaPlayerOption {
+
+        @Override
+        public boolean execute(ResourceFile mediaItem) {
+            int threshold = 100 - VOLUME_INTERVAL;
+            if (null != nowPlaying.getMediaItem() && mediaPlayer.getVolume() <= threshold) {
+                    mediaPlayer.setVolume(mediaPlayer.getVolume()+VOLUME_INTERVAL);
+            }
+            return true;
+        }
+    }
+
+    private class VolumeDown implements MediaPlayerOption {
+
+        @Override
+        public boolean execute(ResourceFile mediaItem) {
+            if (null != nowPlaying.getMediaItem()) {
+                if (mediaPlayer.getVolume() >= VOLUME_INTERVAL) {
+                  mediaPlayer.setVolume(mediaPlayer.getVolume()-VOLUME_INTERVAL);
+                } else mediaPlayer.setVolume(0);
+            }
             return true;
         }
     }

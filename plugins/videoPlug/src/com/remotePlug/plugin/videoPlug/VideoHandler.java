@@ -10,8 +10,6 @@ import com.remotePlug.resources.ResourceFile;
 import com.remotePlug.resources.ResourceItem;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 
@@ -66,11 +64,19 @@ public class VideoHandler implements Handler {
                     permittedOperations.remove(MediaPlayer.Option.UnPause.toString());
                     startOperation = MediaPlayer.Option.Pause.toString();
                 }
+                if (!MediaPlayerEngine.getInstance().hasNext()) permittedOperations.remove(MediaPlayer.Option.Next.toString());
+                if (!MediaPlayerEngine.getInstance().hasPrevious()) permittedOperations.remove(MediaPlayer.Option.Previous.toString());
             } else {
                 shrinkToMinimalOptions(permittedOperations);
+                startOperation = MediaPlayer.Option.Play.toString();
             }
         }
         handlingData.update(startOperation, permittedOperations, isActive);
+    }
+
+    @Override
+    public ResourceItem getCurrentlyHandling() {
+        return MediaPlayerEngine.getInstance().getNowPlaying().getMediaItem();
     }
 
     private void shrinkToMinimalOptions(ArrayList<String> permittedOperations) {

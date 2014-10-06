@@ -32,6 +32,14 @@ public class MediaPlayerEngine {
         return getPlayer().processOption(option, mediaItem);
     }
 
+    public boolean hasNext() {
+        return getPlayer().hasNext();
+    }
+
+    public boolean hasPrevious() {
+        return getPlayer().hasPrevious();
+    }
+
     public MediaPlayer.NowPlaying getNowPlaying() {
         return getPlayer().getNowPlaying();
     }

@@ -6,9 +6,8 @@
 
     <#list root.getChildren() as item>
         <tr>
-            <td>
+            <td style="word-wrap: break-word;">
                 ${item.getRaw().getName()}
-
             </td>
             <td>
                 <#assign handlingData = item.getHandlingData()>
