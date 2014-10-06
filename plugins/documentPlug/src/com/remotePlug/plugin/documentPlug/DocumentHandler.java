@@ -5,19 +5,22 @@ import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.resources.FileUtilities;
 import com.remotePlug.resources.ResourceItem;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class DocumentHandler implements Handler {
 
-    final String[] offeredFormats = {"pdf", "txt", "doc"};
+    Set<String> offeredFormats;
+
+    DocumentHandler(Set<String> formats) {
+        this.offeredFormats = formats;
+    }
 
     @Override
     public boolean canHandle(PlugRequest request) {
         return (null != request
                 && null != request.getResourceItem()
                 && FileUtilities.isAFile(request.getResourceItem())
-                && isOffered(FileUtilities.toResourceFile(request.getResourceItem()).getFormat()));
+                && offeredFormats.contains(FileUtilities.toResourceFile(request.getResourceItem()).getFormat()));
     }
 
     @Override
@@ -32,10 +35,4 @@ public class DocumentHandler implements Handler {
         return Collections.singleton("N/A");
     }
 
-    private boolean isOffered(String format) {
-        for(String offeredFormat: offeredFormats)
-            if(offeredFormat.equals(format))
-                return true;
-        return false;
-    }
 }

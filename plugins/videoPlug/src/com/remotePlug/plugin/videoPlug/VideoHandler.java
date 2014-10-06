@@ -11,17 +11,23 @@ import com.remotePlug.resources.ResourceItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+
 
 public class VideoHandler implements Handler {
 
-    final String acceptableFormat = "mp4";
+    Set<String> acceptableFormats;
+
+    VideoHandler(Set<String> formats) {
+        acceptableFormats = formats;
+    }
 
     @Override
     public boolean canHandle(PlugRequest request) {
         return (null != request
                 && null != request.getResourceItem()
                 && FileUtilities.isAFile(request.getResourceItem())
-                && acceptableFormat.equals(FileUtilities.toResourceFile(request.getResourceItem()).getFormat()));
+                && acceptableFormats.contains(FileUtilities.toResourceFile(request.getResourceItem()).getFormat()));
     }
 
     @Override
