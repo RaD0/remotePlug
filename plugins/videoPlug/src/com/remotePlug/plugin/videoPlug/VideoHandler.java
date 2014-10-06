@@ -1,6 +1,7 @@
 package com.remotePlug.plugin.videoPlug;
 
 import com.remotePlug.handlers.Handler;
+import com.remotePlug.handlers.HandlingData;
 import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.plugin.videoPlug.mediaPlayer.MediaPlayer;
 import com.remotePlug.plugin.videoPlug.mediaPlayer.MediaPlayerEngine;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 public class VideoHandler implements Handler {
 
-    Set<String> acceptableFormats;
+    private Set<String> acceptableFormats;
 
     VideoHandler(Set<String> formats) {
         acceptableFormats = formats;
@@ -42,29 +43,34 @@ public class VideoHandler implements Handler {
     }
 
     @Override
-    public Collection<String> getPermittedOperations(ResourceItem item) {
-        if (null == item) Collections.emptyList();
+    public void packHandlingData(ResourceItem item, HandlingData handlingData) {
+        if (null == item || null == handlingData) return;
         ArrayList<String> permittedOperations = new ArrayList<>();
         for(MediaPlayer.Option option: MediaPlayer.Option.values())
             permittedOperations.add(option.toString());
         MediaPlayer.NowPlaying nowPlaying = MediaPlayerEngine.getInstance().getNowPlaying();
-
+        boolean isActive = false;
+        String startOperation = "";
         if (null == nowPlaying || MediaPlayer.Status.Closed.equals(nowPlaying.getStatus()) || null == nowPlaying.getMediaItem()) {
             shrinkToMinimalOptions(permittedOperations);
-            return Collections.unmodifiableCollection(permittedOperations);
-        }
-        if (item.equals(nowPlaying.getMediaItem())) {
-            if (MediaPlayer.Status.Paused.equals(nowPlaying.getStatus())) {
-                permittedOperations.remove(MediaPlayer.Option.Pause.toString());
-                permittedOperations.remove(MediaPlayer.Option.Play.toString());
-            } else if (MediaPlayer.Status.Playing.equals(nowPlaying.getStatus())) {
-                permittedOperations.remove(MediaPlayer.Option.Play.toString());
-                permittedOperations.remove(MediaPlayer.Option.UnPause.toString());
-            }
+            startOperation = MediaPlayer.Option.Play.toString();
         } else {
-            shrinkToMinimalOptions(permittedOperations);
+            if (item.equals(nowPlaying.getMediaItem())) {
+                isActive = true;
+                if (MediaPlayer.Status.Paused.equals(nowPlaying.getStatus())) {
+                    permittedOperations.remove(MediaPlayer.Option.Pause.toString());
+                    permittedOperations.remove(MediaPlayer.Option.Play.toString());
+                    startOperation = MediaPlayer.Option.UnPause.toString();
+                } else if (MediaPlayer.Status.Playing.equals(nowPlaying.getStatus())) {
+                    permittedOperations.remove(MediaPlayer.Option.Play.toString());
+                    permittedOperations.remove(MediaPlayer.Option.UnPause.toString());
+                    startOperation = MediaPlayer.Option.Pause.toString();
+                }
+            } else {
+                shrinkToMinimalOptions(permittedOperations);
+            }
         }
-        return Collections.unmodifiableCollection(permittedOperations);
+        handlingData.update(startOperation, permittedOperations, isActive);
     }
 
     private void shrinkToMinimalOptions(ArrayList<String> permittedOperations) {

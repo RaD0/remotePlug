@@ -11,5 +11,6 @@ public class Routes {
         get("/list", PlugController::list, uiSettings.getFreeMarkerEngine());
         get("/item/:id/:action", PlugController::process);
         get("/dir/:id", PlugController::showDirectory, uiSettings.getFreeMarkerEngine());
+        get("/item/:id", PlugController::showFile, uiSettings.getFreeMarkerEngine());
     }
 }

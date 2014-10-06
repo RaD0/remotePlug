@@ -1,6 +1,7 @@
 package com.remotePlug.plugin.documentPlug;
 
 import com.remotePlug.handlers.Handler;
+import com.remotePlug.handlers.HandlingData;
 import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.resources.FileUtilities;
 import com.remotePlug.resources.ResourceItem;
@@ -9,7 +10,7 @@ import java.util.*;
 
 public class DocumentHandler implements Handler {
 
-    Set<String> offeredFormats;
+    private Set<String> offeredFormats;
 
     DocumentHandler(Set<String> formats) {
         this.offeredFormats = formats;
@@ -31,8 +32,8 @@ public class DocumentHandler implements Handler {
     }
 
     @Override
-    public Collection<String> getPermittedOperations(ResourceItem item) {
-        return Collections.singleton("N/A");
+    public void packHandlingData(ResourceItem item, HandlingData handlingData) {
+        handlingData.update("N/A", null, false);
     }
 
 }

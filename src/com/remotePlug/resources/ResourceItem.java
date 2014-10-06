@@ -1,6 +1,7 @@
 package com.remotePlug.resources;
 
 import com.remotePlug.handlers.Handler;
+import com.remotePlug.handlers.HandlingData;
 import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.handlers.RequestHandler;
 
@@ -16,7 +17,9 @@ public abstract class ResourceItem implements Comparable<ResourceItem> {
     private String name;
     private FileUtilities.ResourceType type;
     private String format;
+    private HandlingData handlingData;
     protected PlugRequest request;
+
 
     public ResourceItem(UUID id, File mediaFile, String name, FileUtilities.ResourceType type, String format) {
         this.id = id;
@@ -24,6 +27,7 @@ public abstract class ResourceItem implements Comparable<ResourceItem> {
         this.name = name;
         this.type = type;
         this.format = format;
+        handlingData = new HandlingData();
     }
 
     protected abstract void setPlugRequest();
@@ -56,9 +60,10 @@ public abstract class ResourceItem implements Comparable<ResourceItem> {
         return (null != id && getId().equals(id));
     }
 
-    public Collection<String> getPermittedOperations() {
+    public HandlingData getHandlingData() {
         Handler handler = RequestHandler.getInstance().getHandler(request);
-        if (null == handler) return Collections.emptyList();
-        return handler.getPermittedOperations(this);
+        if (null == handler) return handlingData;
+        handler.packHandlingData(this, handlingData);
+        return handlingData;
     }
 }

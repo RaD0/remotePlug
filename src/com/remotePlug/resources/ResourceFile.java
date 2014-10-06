@@ -19,6 +19,10 @@ public class ResourceFile extends ResourceItem {
         return parent;
     }
 
+    public boolean hasParent() {
+        return null != getParent();
+    }
+
     @Override
     public String toString() {
         return getId()+" "+getName()+" "+getFormat();

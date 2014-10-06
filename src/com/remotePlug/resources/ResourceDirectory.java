@@ -14,7 +14,7 @@ public class ResourceDirectory extends ResourceItem {
     private ResourceDirectory parent;
 
     public ResourceDirectory(UUID id, File mediaFile, String name, int size, ResourceDirectory parent) {
-        super(id, mediaFile, name, FileUtilities.ResourceType.Directory, "/");
+        super(id, mediaFile, name, FileUtilities.ResourceType.Directory, Format.Dir.toString());
         children = new ArrayList<>(size);
         this.parent = parent;
         setPlugRequest();
@@ -72,6 +72,11 @@ public class ResourceDirectory extends ResourceItem {
         return found;
     }
 
+    // Seems like a really stupid thing to do!
+    enum Format {
+        Dir
+    }
+
     @Override
     public int compareTo(ResourceItem o) {
         if (null == o) return -1;
@@ -81,6 +86,6 @@ public class ResourceDirectory extends ResourceItem {
 
     @Override
     protected void setPlugRequest() {
-        request = new PlugRequest(this, "/");
+        request = new PlugRequest(this, Format.Dir.toString());
     }
 }

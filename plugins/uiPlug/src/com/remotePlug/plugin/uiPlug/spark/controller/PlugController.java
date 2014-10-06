@@ -11,17 +11,22 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PlugController {
 
+    private static Map<String, Object> attributes = new HashMap<>();
+
+    static {
+        attributes.put("helper", UIHelper.getInstance());
+    }
+
     public static ModelAndView list(Request request, Response response) {
-        Map<String, Object> attributes = new HashMap<>();
         ResourceDirectory root = ResourceManager.getInstance().getRoot();
         attributes.put("root", root);
-        attributes.put("helper", UIHelper.getInstance());
-        return new ModelAndView(attributes, "/list.ftl");
+        return new ModelAndView(attributes, "/plug/list.ftl");
     }
 
     public static Object process(Request request, Response response) {
@@ -32,13 +37,12 @@ public class PlugController {
             PlugRequest plugRequest = new PlugRequest(item, action);
             RequestHandler.getInstance().handleMediaRequest(plugRequest);
         }
-        response.redirect("/dir/"+FileUtilities.toResourceFile(item).getParent().getId());
+        response.redirect("/item/"+id);
         return null;
     }
 
     public static ModelAndView showDirectory(Request request, Response response) {
         String id = request.params("id");
-        Map<String, Object> attributes = new HashMap<>();
         boolean added = false;
         if (null != id) {
             ResourceItem item = ResourceManager.getInstance().getItem(id);
@@ -47,10 +51,21 @@ public class PlugController {
                 added = true;
             }
         }
-        attributes.put("helper", UIHelper.getInstance());
         if (!added)
             attributes.put("root", ResourceManager.getInstance().getRoot());
-        return new ModelAndView(attributes, "/list.ftl");
+        return new ModelAndView(attributes, "/plug/list.ftl");
+    }
+
+    public static ModelAndView showFile(Request request, Response response) {
+        String id = request.params("id");
+        ResourceItem item = ResourceManager.getInstance().getItem(id);
+        if (!FileUtilities.isAFile(item)) {
+            response.redirect("/list");
+            return null;
+        }
+        attributes.put("item", FileUtilities.toResourceFile(item));
+
+        return new ModelAndView(attributes, "/plug/show.ftl");
     }
 
 }
