@@ -2,6 +2,10 @@ package com.remotePlug.resources;
 
 import java.io.File;
 
+/**
+ * A helper class that does useful simple tasks with a file.
+ * Like fetching the format of a file or telling us if an Item is a file or a directory
+ */
 public class FileUtilities {
 
     public static String getFileFormat(File file) {

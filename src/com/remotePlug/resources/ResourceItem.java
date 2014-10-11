@@ -6,9 +6,11 @@ import com.remotePlug.handlers.PlugRequest;
 import com.remotePlug.handlers.RequestHandler;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
+
+/**
+ * A ResourceItem can either be a File or Folder.It provides basic details of it's type and other stuff.
+ */
 
 public abstract class ResourceItem implements Comparable<ResourceItem> {
 

@@ -5,6 +5,10 @@ import com.remotePlug.handlers.PlugRequest;
 import java.io.File;
 import java.util.UUID;
 
+/**
+ * A ResourceFile is typically a file in the system.
+ * Parent defining it directory
+ */
 public class ResourceFile extends ResourceItem {
 
     private ResourceDirectory parent;

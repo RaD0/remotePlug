@@ -4,6 +4,10 @@ import com.remotePlug.components.ComponentLauncher;
 
 import java.io.File;
 
+/**
+ * Loads up ApplicationSettings, by allowing ApplicationSettingsReader to read all settings and load them to ApplicationSettings
+ */
+
 public class ApplicationComponentLauncher implements ComponentLauncher {
 
     private final String settingsPath;

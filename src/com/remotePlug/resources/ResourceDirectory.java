@@ -8,6 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
+/**
+ * This is a direct map of a system folder/directory
+ * An instance of ResourceDirectory can have children and a parent.
+ * Children defining it sub-files/folders and parent defining it's root.
+ * If it's the root directory, then parent would be null
+ */
 public class ResourceDirectory extends ResourceItem {
 
     private ArrayList<ResourceItem> children;
@@ -55,6 +61,12 @@ public class ResourceDirectory extends ResourceItem {
         return null;
     }
 
+    /**
+     * Returns and item with the passed Id. It does a deep search,
+     * Meaning if the item is present in the sub-sub-directory of this directory, even those items would be fetched
+     * @param id
+     * @return Returns if found the Resource item with id
+     */
     public ResourceItem goDeepAndGetChild(UUID id) {
         if (null == id) return null;
         ResourceItem found = null;

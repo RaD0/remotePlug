@@ -2,6 +2,11 @@ package com.remotePlug.handlers;
 
 import com.remotePlug.resources.ResourceItem;
 
+/**
+ * An instances of this defines the incoming request to the application
+ * ResourceItem would be the item requested for and requestType would be telling us what to do with this item
+ */
+
 public class PlugRequest {
     private final ResourceItem resourceItem;
     private final Object requestType;
